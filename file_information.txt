@@ -1,0 +1,54 @@
+traders.py
+mcp_params.py :
+The parameters for all mcp servers are defined here
+
+templates.py :
+The instructions and message prompts for Researcher Agent and Trader Agent are defined here
+
+accounts.py :
+The account management logic is defined here (with access to SQLLite database for performing read/write operations)
+
+accounts_server.py :
+Wrapper MCP Server for using the accounts.py (Account Management System) as an MCP Tool
+
+accounts_client.py :
+Wrapper MCP Client that calls the accounts_server.py MCP Server to access the accounts_py tool
+This is mainly required for making resource calls (as resource calls for custom MCP Servers require custom MCP Client
+
+market.py :
+This class is used to fetch and store/cache the market data that is retrieved by Polygon API
+This ensures that subsequent market calls on same date does not require multiple API requests and can be retrieved quickly from cache
+
+market_server.py
+Wrapper MCP Server for using the market.py (Market data) as an MCP Tool
+
+push_server.py
+Wrapper MCP Server for using Push Notification Functionality using Pushover
+
+database.py 
+This class contains the database write/read utility methods (Account data, market data, logs)
+
+accounts.db
+The actual SQLLite database which stores all the information
+
+traders.py
+Contains the Trader() class which contains the code to actually create the Researcher/Trader agents and run them 
+
+reset.py
+This class contains the reset() method which resets the accounts and strategy for the 4 registered Agents
+This reset() needs to be run before starting the app for the first time
+
+app.py
+This class has the Gradio UI code for rendering of the application
+
+trading_floor.py
+This class creates the listed Trader objects and evokes run on all of them asynchronously
+This actually kicks of the agents and the trading starts. This is reflected on the UI.
+This class also handles which llm models to use, sleeping strategy, whether to run trading when market is closed etc
+
+tracers.py
+Custom Tracer Class (LogTracer) which overrides Open AI Agents SDK's trace/span methods to incorporate custom logic (extract the agent name from original Trace ID and write to log)
+This ensures that these callbacks are called by the Open AI global tracer each time a Trace or Span starts or ends
+For this to work, 
+The custom class must extend the base class "TracingProcessor"
+Just before the processes are actually started, add "add_trace_processor(LogTracer())" to inform Agents SDK to use this custom tracer
